@@ -3,7 +3,8 @@ import FilterForm from "./components/FilterForm"
 import Persons from "./components/Persons"
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
-
+import Notification from './components/Notification'
+import './style.css'
 
 const App = () => {
   const [ persons, setPersons] = useState([]) 
@@ -11,6 +12,9 @@ const App = () => {
   const [ newNumber, setNewNumber] = useState('')
   const [ newFilter, setNewFilter] = useState('')
   const [ filteredList, setFilteredList] = useState(persons)
+  const [ notification, setNotification] = useState("")
+  const [ notificationStyle, setNotificationStyle] = useState("")
+
 
   useEffect(() => {
     personService
@@ -39,6 +43,14 @@ const App = () => {
                   setPersons(response.data)
                   setNewFilter("")
                   setFilteredList(response.data)
+                  setTimeout(() => {
+                    setNotification(`Updated contact ${newName} phonenumber to ${newNumber} succesfully.`)
+                    setNotificationStyle("success")
+                    setTimeout(() => {
+                      setNotification("")
+                      setNotificationStyle("")
+                    }, 5000)
+                  }, 1000)
                 })
             })
         }
@@ -54,6 +66,14 @@ const App = () => {
           setNewNumber("")
           setNewFilter("")
           setFilteredList(persons.concat([newPerson]))
+          setTimeout(() => {
+            setNotification(`Added a new contact ${newName} to the phonebook.`)
+            setNotificationStyle("success")
+            setTimeout(() => {
+              setNotification("")
+              setNotificationStyle("")
+            }, 5000)
+          }, 1000)
         }
       )
     }
@@ -81,10 +101,37 @@ const App = () => {
       personService
         .remove(person.id)
         .then(response => {
-          const updatedPersonList = persons.filter(p => p.id !== person.id)
-          setPersons(updatedPersonList)
-          setFilteredList(updatedPersonList)
-      })
+          personService
+            .getAll()
+            .then(response => {
+              setPersons(response.data)
+              setFilteredList(response.data)
+          })
+          setTimeout(() => {
+            setNotification(`The contact ${person.name} is deleted from phonebook.`)
+            setNotificationStyle("success")
+            setTimeout(() => {
+              setNotification("")
+              setNotificationStyle("")
+            }, 5000)
+          }, 1000)
+         })
+         .catch(error => {
+          setTimeout(() => {
+            setNotification(`Information of ${person.name} has already been removed from server.`)
+            setNotificationStyle("error")
+            setTimeout(() => {
+              setNotification("")
+              setNotificationStyle("")
+            }, 10000)
+          }, 1000)
+          personService
+            .getAll()
+            .then(response => {
+              setPersons(response.data)
+              setFilteredList(response.data)
+          })
+        })
     }
   }
 
@@ -92,6 +139,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} style={notificationStyle} />
       <FilterForm filter={newFilter} onFilterChange={handleFilterChange} />
       <PersonForm addNewName={addNewName} name={newName} handleNameChange={handleNameChange} number={newNumber} handleNumberChange={handleNumberChange} />
       <Persons filteredList={filteredList} handleDeleteClicked={handleDeleteClicked} />
