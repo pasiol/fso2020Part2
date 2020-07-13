@@ -1,7 +1,7 @@
 import React from "react"
 
 const FilterForm = ({filter, onFilterChange}) => {
-    console.log('Component FilterForm props:', filter, onFilterChange);
+    console.log('Component FilterForm props:', filter);
     
     return (
         <React.Fragment>

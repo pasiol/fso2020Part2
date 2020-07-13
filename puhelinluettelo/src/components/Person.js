@@ -1,10 +1,10 @@
 import React from "react"
 
-const Person = ({name, number}) => {
-    console.log('Component Person props:', name, number);
+const Person = ({person, handleDeleteClicked}) => {
+    console.log('Component Person props:', person);
     return (
         <React.Fragment>
-            <p>{name} {number}</p>
+            <p>{person.name} {person.number} <button onClick={() => handleDeleteClicked(person)}>delete</button></p>
         </React.Fragment>
     )
 }

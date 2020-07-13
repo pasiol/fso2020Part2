@@ -1,7 +1,7 @@
 import React from "react"
 
 const PersonForm = ({name, number, addNewName, handleNameChange, handleNumberChange}) => {
-    console.log('Component PersonForm props:', name, number, addNewName, handleNameChange, handleNumberChange);
+    console.log('Component PersonForm props:', name, number);
     
     return (
         <React.Fragment>
